@@ -1,43 +1,19 @@
 #include <iostream>
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
+#include "Game.h"
 
 int main()
 {
-    // Window Setup
-    sf::RenderWindow window(sf::VideoMode(640, 480), "Simple 2D Game", sf::Style::Titlebar | sf::Style::Close);
-    sf::Event event;
+    // Init Game Engine
+    Game game;
 
     // Game Loop
-    while (window.isOpen())
+    while (game.running())
     {
-        // Event Polling
-        while (window.pollEvent(event))
-        {
-            switch (event.type)
-            {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Escape)
-                    window.close();
-                break;
-            }
-        }
-
         // Update
-
+        game.update();
 
         // Render
-        window.clear(sf::Color::Blue); // Clear the previous frame
-
-        // Draw
-
-        window.display(); // Display the current frame
+        game.render();
     }
 
     // End of Application
