@@ -12,6 +12,8 @@ void Game::initWindow()
     this->videoMode.width = 800;
 
     this->window = new sf::RenderWindow(this->videoMode, "Simple 2D Game", sf::Style::Titlebar | sf::Style::Close);
+
+    this->window->setFramerateLimit(60);
 }
 
 // Constructors / Destructors
@@ -19,11 +21,22 @@ Game::Game()
 {
     this->initVariables();
     this->initWindow();
+    this->initEnemies();
 }
 
 Game::~Game()
 {
     delete this->window;
+}
+
+void Game::initEnemies()
+{
+    this->enemy.setPosition(10.f, 10.f);
+    this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+    this->enemy.setScale(sf::Vector2f(0.5f, 0.5f));
+    this->enemy.setFillColor(sf::Color::Cyan);
+    this->enemy.setOutlineColor(sf::Color::Blue);
+    this->enemy.setOutlineThickness(1.f);
 }
 
 // Functions
@@ -44,9 +57,20 @@ void Game::pollEvents()
     }
 }
 
+void Game::updateMousePositions()
+{
+    /** 
+     * Updates the mouse positions:
+     * - Mouse Position Relative to Window (Vector2i)
+     */
+    this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+}
+
 void Game::update()
 {
     this->pollEvents();
+
+    this->updateMousePositions();
 }
 
 void Game::render()
@@ -58,9 +82,10 @@ void Game::render()
      * - Render objects
      * - Display frame in window
      */
-    this->window->clear(sf::Color(255, 0, 0, 255));
+    this->window->clear();
 
     // Draw game objects
+    this->window->draw(this->enemy);
 
     this->window->display();
 }
@@ -70,5 +95,3 @@ const bool Game::running() const
 {
     return this->window->isOpen();
 }
-
-

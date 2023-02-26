@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
@@ -18,9 +20,16 @@ private:
     sf::VideoMode videoMode;
     sf::Event event;
 
+    // Mouse Positions
+    sf::Vector2i mousePosWindow;
+
+    // Game Objects
+    sf::RectangleShape enemy;
+
     // Private Functions
     void initVariables();
     void initWindow();
+    void initEnemies();
 
 public:
     // Constructors / Destructors
@@ -32,6 +41,7 @@ public:
 
     // Functions
     void pollEvents();
+    void updateMousePositions();
     void update();
     void render();
 };
