@@ -1,2 +1,3 @@
 *.o
 simple2dgameapp
+.vscode/*

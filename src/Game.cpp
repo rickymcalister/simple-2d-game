@@ -4,6 +4,12 @@
 void Game::initVariables()
 {
     this->window = nullptr;
+
+    // Game Logic
+    this->points = 0;
+    this->enemySpawnTimerMax = 1000.f;
+    this->enemySpawnTimer = this->enemySpawnTimerMax;
+    this->maxEnemies = 5;
 }
 
 void Game::initWindow()
@@ -40,6 +46,21 @@ void Game::initEnemies()
 }
 
 // Functions
+void Game::spawnEnemy()
+{
+    /**
+     * @brief Spawns an enemy and sets it's position randomly
+     * @return void
+     */
+    this->enemy.setPosition(
+        static_cast<float>(rand() % static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
+        0.f
+    );
+
+    this->enemy.setFillColor(sf::Color::Green);
+    this->enemies.push_back(this->enemy);
+}
+
 void Game::pollEvents()
 {
     while (this->window->pollEvent(this->event))
@@ -66,16 +87,66 @@ void Game::updateMousePositions()
     this->mousePosWindow = sf::Mouse::getPosition(*this->window);
 }
 
+void Game::updateEnemies()
+{
+    /**
+     * @brief Updates the enemy spawn timer and spawns enemies
+     * @return void
+     */
+    // Updating Timer for Enemy Spawn
+    if (this->enemies.size() < this->maxEnemies)
+    {
+        if (this->enemySpawnTimer >= this->enemySpawnTimerMax)
+        {
+            // Spawn the enemy and reset the timer
+            this->spawnEnemy();
+            this->enemySpawnTimer = 0.f;
+        } else {
+            this->enemySpawnTimer += 1.f;
+        }
+    }
+
+    // Change Position
+    for (size_t i = 0; i < this->enemies.size(); i++)
+    {
+        bool deleted = false;
+
+        this->enemies[i].move(0.f, 1.f);
+
+        if (this->enemies[i].getPosition().y > this->window->getSize().y)
+        {
+            this->enemies.erase(this->enemies.begin() + i);
+            deleted = true;
+        }
+
+        if (deleted)
+        {
+            i--;
+        }
+    }
+}
+
 void Game::update()
 {
     this->pollEvents();
 
     this->updateMousePositions();
+
+    this->updateEnemies();
+}
+
+void Game::renderEnemies()
+{
+    // Render enemies
+    for (auto &e : this->enemies)
+    {
+        this->window->draw(e);
+    }
 }
 
 void Game::render()
 {
-    /*
+    /**
      * Render Game Objects
      *
      * - Clear old frame
@@ -85,7 +156,7 @@ void Game::render()
     this->window->clear();
 
     // Draw game objects
-    this->window->draw(this->enemy);
+    this->renderEnemies();
 
     this->window->display();
 }
