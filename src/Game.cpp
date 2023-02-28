@@ -25,24 +25,39 @@ void Game::initWindow()
     this->window->setFramerateLimit(60);
 }
 
+void Game::initEnemies()
+{
+    this->enemy.setPosition(10.f, 10.f);
+    this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+    this->enemy.setFillColor(sf::Color::Cyan);
+}
+
+void Game::initFonts()
+{
+    this->font.loadFromFile("assets/fonts/Dosis-Light.ttf");
+}
+
+void Game::initText()
+{
+    this->uiText.setFont(this->font);
+    this->uiText.setCharacterSize(24);
+    this->uiText.setFillColor(sf::Color::White);
+    this->uiText.setString("NONE");
+}
+
 // Constructors / Destructors
 Game::Game()
 {
     this->initVariables();
     this->initWindow();
+    this->initFonts();
+    this->initText();
     this->initEnemies();
 }
 
 Game::~Game()
 {
     delete this->window;
-}
-
-void Game::initEnemies()
-{
-    this->enemy.setPosition(10.f, 10.f);
-    this->enemy.setSize(sf::Vector2f(100.f, 100.f));
-    this->enemy.setFillColor(sf::Color::Cyan);
 }
 
 // Functions
@@ -200,6 +215,8 @@ void Game::update()
     {
         this->updateMousePositions();
 
+        this->updateText();
+
         this->updateEnemies();
     }
 
@@ -209,18 +226,31 @@ void Game::update()
     }
 }
 
-void Game::renderEnemies()
+void Game::renderEnemies(sf::RenderTarget& target)
 {
     // Render enemies
     for (auto &e : this->enemies)
     {
-        this->window->draw(e);
+        target.draw(e);
     }
 }
 
 const bool Game::getEndGame() const
 {
     return this->endGame;
+}
+
+void Game::updateText()
+{
+    std::stringstream stringStream;
+    stringStream << "Points: " << this->points << "\n"
+                 << "Health: " << this->health;
+    this->uiText.setString(stringStream.str());
+}
+
+void Game::renderText(sf::RenderTarget& target)
+{
+    target.draw(this->uiText);
 }
 
 void Game::render()
@@ -235,7 +265,9 @@ void Game::render()
     this->window->clear();
 
     // Draw game objects
-    this->renderEnemies();
+    this->renderEnemies(*this->window);
+
+    this->renderText(*this->window);
 
     this->window->display();
 }
