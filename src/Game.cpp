@@ -34,7 +34,10 @@ void Game::initEnemies()
 
 void Game::initFonts()
 {
-    this->font.loadFromFile("assets/fonts/Dosis-Light.ttf");
+    if (!this->font.loadFromFile("assets/fonts/Dosis-Ligh.ttf"))
+    {
+        std::cout << "ERROR::GAME::Could not load font" << "\n";
+    }
 }
 
 void Game::initText()
